@@ -1,56 +1,2455 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!doctype html>
+<html lang="ar" dir="rtl">
+ <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Infinite Memory AI</title>
+  <meta name="description" content="نظام إدارة متكامل مع نظام مستخدمين">
+  <meta name="theme-color" content="#6366f1">
+  <title>شركة البدوي للتجارة</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f9;
-      color: #333;
+    /* ==================== المتغيرات / Variables ==================== */
+    :root {
+      --primary-color: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --secondary-color: #f59e0b;
+      --danger-color: #ef4444;
+      --warning-color: #f59e0b;
+      --success-color: #10b981;
+      --info-color: #3b82f6;
+      --accent-color: #ec4899;
+      --purple-color: #a855f7;
+      
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --text-light: #ffffff;
+      
+      --bg-primary: #ffffff;
+      --bg-secondary: #f9fafb;
+      --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      
+      --border-color: #e5e7eb;
+      --shadow: 0 1px 3px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+      
+      --border-radius: 12px;
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+    }
+
+    /* ==================== إعادة تعيين / Reset ==================== */
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      direction: rtl;
+      text-align: right;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ==================== شاشة تسجيل الدخول / Login Screen ==================== */
+    .login-screen {
+      min-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-gradient);
+      padding: var(--spacing-lg);
+    }
+
+    .login-container {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-lg);
+      padding: var(--spacing-xl);
+      max-width: 400px;
+      width: 100%;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .login-header h1 {
+      font-size: 1.75rem;
+      background: var(--bg-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .login-header p {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .user-type-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .user-type-btn {
+      padding: var(--spacing-lg);
+      border: 2px solid var(--border-color);
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all 0.3s;
       text-align: center;
     }
-    header {
-      background: #4a90e2;
-      color: white;
-      padding: 20px 0;
+
+    .user-type-btn:hover {
+      border-color: var(--primary-color);
+      background: var(--bg-secondary);
+      transform: translateY(-2px);
     }
-    main {
-      padding: 40px 20px;
+
+    .user-type-btn.active {
+      border-color: var(--primary-color);
+      background: var(--bg-gradient);
+      color: var(--text-light);
+      transform: scale(1.05);
     }
-    h1 {
-      margin-bottom: 10px;
+
+    .user-type-btn .icon {
+      font-size: 2.5rem;
+      margin-bottom: var(--spacing-sm);
     }
-    p {
-      font-size: 1.2em;
-      max-width: 600px;
-      margin: auto;
+
+    .user-type-btn .label {
+      font-weight: 600;
     }
-    footer {
-      background: #222;
-      color: #aaa;
-      padding: 15px 0;
-      margin-top: 40px;
+
+    /* ==================== التطبيق الرئيسي / Main App ==================== */
+    .app {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      display: none;
+    }
+
+    .app.active {
+      display: flex;
+    }
+
+    .app-header {
+      background: var(--bg-gradient);
+      color: var(--text-light);
+      padding: var(--spacing-md);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      box-shadow: var(--shadow-lg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .app-header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      cursor: pointer;
+      padding: var(--spacing-sm);
+      border-radius: var(--border-radius);
+      transition: background 0.2s;
+    }
+
+    .user-info:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--text-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      box-shadow: var(--shadow);
+    }
+
+    .user-name {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .menu-toggle {
+      background: none;
+      border: none;
+      color: var(--text-light);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: var(--spacing-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app-container {
+      display: flex;
+      flex: 1;
+      position: relative;
+    }
+
+    /* ==================== القائمة الجانبية / Sidebar ==================== */
+    .sidebar {
+      background-color: var(--bg-primary);
+      width: 250px;
+      box-shadow: var(--shadow);
+      position: fixed;
+      right: 0;
+      top: 60px;
+      bottom: 0;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      z-index: 90;
+      overflow-y: auto;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .menu-list {
+      list-style: none;
+      padding: var(--spacing-md);
+    }
+
+    .menu-item {
+      width: 100%;
+      padding: var(--spacing-md);
+      border: none;
+      background: none;
+      text-align: right;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      border-radius: var(--border-radius);
+      transition: all 0.2s;
+      font-size: 1rem;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .menu-item:hover {
+      background: var(--bg-secondary);
+      transform: translateX(-5px);
+    }
+
+    .menu-item.active {
+      background: var(--bg-gradient);
+      color: var(--text-light);
+    }
+
+    .menu-icon {
+      font-size: 1.5rem;
+    }
+
+    .menu-label {
+      flex: 1;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 80;
+      display: none;
+    }
+
+    .overlay.show {
+      display: block;
+    }
+
+    /* ==================== المحتوى الرئيسي / Main Content ==================== */
+    .main-content {
+      flex: 1;
+      padding: var(--spacing-lg);
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .page {
+      animation: fadeIn 0.3s ease;
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-lg);
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+    }
+
+    .page-header h2 {
+      font-size: 1.75rem;
+      color: var(--text-primary);
+    }
+
+    /* ==================== البطاقات / Cards ==================== */
+    .card {
+      background-color: var(--bg-primary);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-lg);
+      box-shadow: var(--shadow);
+      margin-bottom: var(--spacing-lg);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .card h3 {
+      margin-bottom: var(--spacing-md);
+      color: var(--text-primary);
+      font-size: 1.25rem;
+    }
+
+    /* ==================== الأزرار / Buttons ==================== */
+    .btn {
+      padding: var(--spacing-md) var(--spacing-lg);
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-sm);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--bg-gradient);
+      color: var(--text-light);
+    }
+
+    .btn-secondary {
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--border-color);
+    }
+
+    .btn-danger {
+      background-color: var(--danger-color);
+      color: var(--text-light);
+    }
+
+    .btn-warning {
+      background-color: var(--warning-color);
+      color: var(--text-light);
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
+      color: var(--text-light);
+    }
+
+    .btn-small {
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: 0.875rem;
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    /* ==================== النماذج / Forms ==================== */
+    .form-group {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: var(--spacing-sm);
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: var(--spacing-md);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-md);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-lg);
+      flex-wrap: wrap;
+    }
+
+    /* ==================== الإحصائيات / Stats ==================== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .stat-card {
+      background: var(--bg-primary);
+      padding: var(--spacing-lg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .stat-card.highlight {
+      background: var(--bg-gradient);
+      color: var(--text-light);
+      border: none;
+    }
+
+    .stat-icon {
+      font-size: 3rem;
+    }
+
+    .stat-content {
+      flex: 1;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      opacity: 0.8;
+    }
+
+    /* ==================== أيقونات الإجراءات السريعة / Quick Actions ==================== */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .action-card {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-lg);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: var(--shadow);
+      border: 2px solid transparent;
+    }
+
+    .action-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary-color);
+    }
+
+    .action-card .icon {
+      font-size: 3rem;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .action-card .title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+
+    .action-card .description {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: var(--spacing-xs);
+    }
+
+    /* ==================== الشارات / Badges ==================== */
+    .status-badge {
+      padding: var(--spacing-xs) var(--spacing-md);
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: inline-block;
+    }
+
+    .status-available {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-allocated {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-maintenance {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-pending {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-confirmed {
+      background-color: #dbeafe;
+      color: #1e40af;
+    }
+
+    .status-completed {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-active {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-admin {
+      background-color: #f3e8ff;
+      color: #6b21a8;
+    }
+
+    .badge-customer {
+      background-color: #dbeafe;
+      color: #1e40af;
+    }
+
+    /* ==================== قائمة المستخدمين / Users List ==================== */
+    .users-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    .user-card {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-lg);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s;
+    }
+
+    .user-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .user-card-header {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .user-card-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--bg-gradient);
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+      box-shadow: var(--shadow);
+    }
+
+    .user-card-info {
+      flex: 1;
+    }
+
+    .user-card-name {
+      font-weight: 600;
+      font-size: 1.125rem;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .user-card-details {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+      flex-wrap: wrap;
+      margin-top: var(--spacing-md);
+    }
+
+    /* ==================== الملف الشخصي / Profile ==================== */
+    .profile-header {
+      background: var(--bg-gradient);
+      color: var(--text-light);
+      padding: var(--spacing-xl);
+      border-radius: var(--border-radius);
+      margin-bottom: var(--spacing-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-lg);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--text-light);
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .profile-info h2 {
+      font-size: 1.75rem;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .profile-meta {
+      display: flex;
+      gap: var(--spacing-md);
+      flex-wrap: wrap;
+      font-size: 0.875rem;
+      opacity: 0.9;
+    }
+
+    /* ==================== الحالة الفارغة / Empty State ==================== */
+    .empty-state {
+      text-align: center;
+      padding: var(--spacing-xl);
+      color: var(--text-secondary);
+    }
+
+    .empty-state .icon {
+      font-size: 4rem;
+      margin-bottom: var(--spacing-md);
+      opacity: 0.5;
+    }
+
+    /* ==================== المودال / Modal ==================== */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: var(--spacing-lg);
+      overflow-y: auto;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-xl);
+      max-width: 500px;
+      width: 100%;
+      max-height: 90%;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+
+    .modal-content.large {
+      max-width: 900px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .modal-header h3 {
+      font-size: 1.5rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      color: var(--danger-color);
+      transform: scale(1.2);
+    }
+
+    /* ==================== دليل الاستخدام / Guide ==================== */
+    .guide-section {
+      margin-bottom: var(--spacing-xl);
+      padding: var(--spacing-lg);
+      background: var(--bg-secondary);
+      border-radius: var(--border-radius);
+      border-right: 4px solid var(--primary-color);
+    }
+
+    .guide-section h3 {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      font-size: 1.5rem;
+      margin-bottom: var(--spacing-md);
+      color: var(--primary-color);
+    }
+
+    .guide-section .icon {
+      font-size: 2.5rem;
+    }
+
+    .guide-steps {
+      display: grid;
+      gap: var(--spacing-md);
+    }
+
+    .guide-step {
+      display: flex;
+      gap: var(--spacing-md);
+      padding: var(--spacing-md);
+      background: var(--bg-primary);
+      border-radius: var(--border-radius);
+      align-items: start;
+    }
+
+    .guide-step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg-gradient);
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .guide-step-content {
+      flex: 1;
+    }
+
+    .guide-step-title {
+      font-weight: 600;
+      font-size: 1.125rem;
+      margin-bottom: var(--spacing-xs);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .guide-step-description {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ==================== إشعارات التوست / Toast Notifications ==================== */
+    .toast-container {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--bg-primary);
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      animation: slideDown 0.3s ease;
+      pointer-events: all;
+      min-width: 300px;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .toast.success {
+      border-right: 4px solid var(--success-color);
+    }
+
+    .toast.error {
+      border-right: 4px solid var(--danger-color);
+    }
+
+    .toast.info {
+      border-right: 4px solid var(--info-color);
+    }
+
+    /* ==================== استجابة الشاشات / Responsive ==================== */
+    @media (min-width: 768px) {
+      .sidebar {
+        position: static;
+        transform: translateX(0);
+      }
+      
+      .menu-toggle {
+        display: none;
+      }
+      
+      .overlay {
+        display: none !important;
+      }
+      
+      .main-content {
+        margin-right: 250px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .app-header h1 {
+        font-size: 1rem;
+      }
+      
+      .page-header h2 {
+        font-size: 1.5rem;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-actions {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .users-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .guide-section .icon {
+        font-size: 2rem;
+      }
+
+      .guide-section h3 {
+        font-size: 1.25rem;
+      }
     }
   </style>
-</head>
-<body>
-  <header>
-    <h1>Infinite Memory AI</h1>
-  </header>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body><!-- شاشة تسجيل الدخول -->
+  <div id="loginScreen" class="login-screen">
+   <div class="login-container">
+    <div class="login-header">
+     <h1>🌾 شركة البدوي للتجارة</h1>
+     <p>مرحباً بك! اختر نوع الحساب للدخول</p>
+    </div>
+    <div class="user-type-selector">
+     <div class="user-type-btn" data-type="admin">
+      <div class="icon">
+       👨‍💼
+      </div>
+      <div class="label">
+       الإدارة
+      </div>
+     </div>
+     <div class="user-type-btn active" data-type="customer">
+      <div class="icon">
+       👤
+      </div>
+      <div class="label">
+       زبون
+      </div>
+     </div>
+    </div>
+    <form id="loginForm">
+     <div class="form-group"><label>اسم المستخدم</label> <input type="text" id="loginUsername" required placeholder="أدخل اسم المستخدم">
+     </div>
+     <div class="form-group"><label>كلمة المرور</label> <input type="password" id="loginPassword" required placeholder="أدخل كلمة المرور">
+     </div><button type="submit" class="btn btn-primary btn-block">دخول</button>
+     <div style="text-align: center; margin-top: 16px;"><button type="button" class="btn btn-secondary btn-block" onclick="showRegisterModal()"> إنشاء حساب جديد </button>
+     </div>
+    </form>
+   </div>
+  </div><!-- التطبيق الرئيسي -->
+  <div id="app" class="app">
+   <header class="app-header"><button class="menu-toggle" id="menuToggle">☰</button>
+    <h1>🌾 شركة البدوي للتجارة</h1>
+    <div class="user-info" onclick="navigateTo('profile')">
+     <div class="user-avatar" id="headerAvatar">
+      A
+     </div>
+     <div class="user-name" id="headerName">
+      المستخدم
+     </div>
+    </div>
+   </header>
+   <div class="app-container">
+    <aside class="sidebar" id="sidebar">
+     <ul class="menu-list" id="menuList"></ul>
+    </aside>
+    <div class="overlay" id="overlay"></div>
+    <main class="main-content"><!-- لوحة التحكم -->
+     <div id="dashboard" class="page active">
+      <div class="page-header">
+       <h2>📊 لوحة التحكم</h2>
+      </div><!-- الإجراءات السريعة للزبائن -->
+      <div id="customerQuickActions" style="display: none;">
+       <h3 style="margin-bottom: 16px;">⚡ إجراءات سريعة</h3>
+       <div class="quick-actions">
+        <div class="action-card" onclick="showNewOrderModal()">
+         <div class="icon">
+          🛒
+         </div>
+         <div class="title">
+          طلب جديد
+         </div>
+         <div class="description">
+          اطلب منتجات
+         </div>
+        </div>
+        <div class="action-card" onclick="navigateTo('myOrders')">
+         <div class="icon">
+          📋
+         </div>
+         <div class="title">
+          طلباتي
+         </div>
+         <div class="description">
+          تابع طلباتك
+         </div>
+        </div>
+        <div class="action-card" onclick="navigateTo('guide')">
+         <div class="icon">
+          📖
+         </div>
+         <div class="title">
+          دليل الاستخدام
+         </div>
+         <div class="description">
+          تعلم كيف تستخدم التطبيق
+         </div>
+        </div>
+        <div class="action-card" onclick="showContactModal()">
+         <div class="icon">
+          📞
+         </div>
+         <div class="title">
+          تواصل معنا
+         </div>
+         <div class="description">
+          اتصل بالإدارة
+         </div>
+        </div>
+       </div>
+      </div><!-- الإحصائيات -->
+      <div class="stats-grid" id="dashboardStats"></div><!-- نصائح -->
+      <div class="card" id="dashboardTips"></div>
+     </div><!-- دليل الاستخدام -->
+     <div id="guide" class="page"></div><!-- الطلبات -->
+     <div id="orders" class="page"></div><!-- طلباتي (للزبائن) -->
+     <div id="myOrders" class="page"></div><!-- المستخدمين -->
+     <div id="users" class="page"></div><!-- الملف الشخصي -->
+     <div id="profile" class="page"></div>
+    </main>
+   </div>
+  </div><!-- مودال التسجيل -->
+  <div id="registerModal" class="modal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <h3>إنشاء حساب جديد</h3><button class="modal-close" onclick="closeModal('registerModal')">✕</button>
+    </div>
+    <form id="registerForm">
+     <div class="form-group"><label>الاسم الكامل *</label> <input type="text" id="regFullName" required placeholder="مثال: أحمد محمد">
+     </div>
+     <div class="form-group"><label>اسم المستخدم *</label> <input type="text" id="regUsername" required placeholder="اختر اسم مستخدم">
+     </div>
+     <div class="form-group"><label>كلمة المرور *</label> <input type="password" id="regPassword" required placeholder="اختر كلمة مرور قوية">
+     </div>
+     <h4 style="margin: 24px 0 16px; color: var(--primary-color); display: flex; align-items: center; gap: 8px;"><span>📱</span> معلومات التواصل</h4>
+     <div class="form-group"><label>📞 رقم الهاتف الأساسي *</label> <input type="tel" id="regPhone" required placeholder="مثال: 01099753053">
+     </div>
+     <div class="form-group"><label>📞 رقم هاتف إضافي</label> <input type="tel" id="regPhone2" placeholder="رقم آخر للتواصل (اختياري)">
+     </div>
+     <div class="form-group"><label>📧 البريد الإلكتروني</label> <input type="email" id="regEmail" placeholder="مثال: name@example.com">
+     </div>
+     <h4 style="margin: 24px 0 16px; color: var(--primary-color); display: flex; align-items: center; gap: 8px;"><span>💬</span> حسابات التواصل الاجتماعي</h4>
+     <div class="form-group"><label>📘 فيسبوك</label> <input type="text" id="regFacebook" placeholder="رابط حسابك على فيسبوك">
+     </div>
+     <div class="form-group"><label>💬 واتساب</label> <input type="tel" id="regWhatsapp" placeholder="رقم واتساب (مثال: 01099753053)">
+     </div>
+     <div class="form-group"><label>📍 العنوان</label> <textarea id="regAddress" rows="2" placeholder="القرية، المدينة، المحافظة"></textarea>
+     </div>
+     <div class="form-actions"><button type="submit" class="btn btn-primary">✅ إنشاء الحساب</button> <button type="button" class="btn btn-secondary" onclick="closeModal('registerModal')">إلغاء</button>
+     </div>
+    </form>
+   </div>
+  </div><!-- مودال طلب جديد -->
+  <div id="newOrderModal" class="modal">
+   <div class="modal-content" style="max-width: 700px;">
+    <div class="modal-header">
+     <h3>🛒 طلب جديد</h3><button class="modal-close" onclick="closeModal('newOrderModal')">✕</button>
+    </div>
+    <form id="newOrderForm"><!-- الأصناف المطلوبة -->
+     <div class="card" style="margin-bottom: 16px; padding: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+       <h4 style="margin: 0;">📦 الأصناف المطلوبة</h4><button type="button" class="btn btn-small btn-primary" onclick="addOrderItem()">+ إضافة صنف</button>
+      </div>
+      <div id="orderItemsList"><!-- سيتم إضافة الأصناف هنا -->
+      </div>
+     </div><!-- وقت التوصيل -->
+     <div class="form-group"><label>⏰ وقت التوصيل *</label> <select id="orderDeliveryTime" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 1rem;"> <option value="">اختر وقت التوصيل</option> <option value="today_evening">اليوم مساءً</option> <option value="tomorrow_evening">غداً مساءً</option> <option value="custom">تحديد وقت آخر</option> </select>
+     </div><!-- تاريخ مخصص (يظهر عند اختيار "تحديد وقت آخر") -->
+     <div class="form-group" id="customDateGroup" style="display: none;"><label>📅 التاريخ المخصص</label> <input type="date" id="orderCustomDate" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 1rem;">
+     </div><!-- مكان الاستلام -->
+     <div class="form-group"><label>📍 مكان الاستلام *</label> <select id="orderPickupLocation" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 1rem;"> <option value="">اختر مكان الاستلام</option> <option value="company_address">من مقر الشركة (البجلات، قرية البشمور، شركة اسلام حمدي البدوي)</option> <option value="delivery_address">التوصيل للعنوان المخصص</option> </select>
+     </div><!-- عنوان التوصيل (يظهر عند اختيار التوصيل) -->
+     <div class="form-group" id="deliveryAddressGroup" style="display: none;"><label>🏠 عنوان التوصيل المخصص *</label> <textarea id="orderDeliveryAddress" rows="2" placeholder="أدخل العنوان الكامل للتوصيل" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 1rem;"></textarea>
+     </div><!-- ملاحظات -->
+     <div class="form-group"><label>📝 ملاحظات إضافية</label> <textarea id="orderNotes" rows="3" placeholder="أي ملاحظات أو تعليمات خاصة..." style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 1rem;"></textarea>
+     </div><!-- ملخص الطلب -->
+     <div class="card" style="background: var(--bg-secondary); margin-bottom: 16px; padding: 16px;">
+      <h4 style="margin-bottom: 12px;">📋 ملخص الطلب</h4>
+      <div id="orderSummary" style="color: var(--text-secondary);">
+       لم يتم إضافة أصناف بعد
+      </div>
+     </div>
+     <div class="form-actions"><button type="submit" class="btn btn-primary">✅ إرسال الطلب</button> <button type="button" class="btn btn-secondary" onclick="closeModal('newOrderModal')">إلغاء</button>
+     </div>
+    </form>
+   </div>
+  </div><!-- مودال التواصل -->
+  <div id="contactModal" class="modal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <h3>📞 تواصل معنا</h3><button class="modal-close" onclick="closeModal('contactModal')">✕</button>
+    </div>
+    <div style="padding: 16px;">
+     <div style="margin-bottom: 16px;"><strong>📱 الهاتف:</strong><br><a href="tel:01099753053" style="color: var(--primary-color); font-size: 1.1rem;">01099753053</a>
+     </div>
+     <div style="margin-bottom: 16px;"><strong>📧 البريد الإلكتروني:</strong><br><a href="mailto:ee5139901@gmail.com" style="color: var(--primary-color);">ee5139901@gmail.com</a>
+     </div>
+     <div style="margin-bottom: 16px;"><strong>📍 العنوان:</strong><br>
+       البجلات، قرية البشمور، شركة اسلام حمدي البدوي
+     </div>
+     <div style="margin-bottom: 16px;"><strong>⏰ ساعات العمل:</strong><br>
+       كل يوم: 1 ظهراً - 10 مساءً
+     </div>
+    </div><button class="btn btn-primary btn-block" onclick="closeModal('contactModal')">إغلاق</button>
+   </div>
+  </div><!-- مودال تعديل الملف الشخصي -->
+  <div id="editProfileModal" class="modal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <h3>✏️ تعديل الملف الشخصي</h3><button class="modal-close" onclick="closeModal('editProfileModal')">✕</button>
+    </div>
+    <form id="editProfileForm">
+     <div class="form-group"><label>الاسم الكامل *</label> <input type="text" id="editFullName" required>
+     </div>
+     <h4 style="margin: 24px 0 16px; color: var(--primary-color); display: flex; align-items: center; gap: 8px;"><span>📱</span> معلومات التواصل</h4>
+     <div class="form-group"><label>📞 رقم الهاتف الأساسي</label> <input type="tel" id="editPhone">
+     </div>
+     <div class="form-group"><label>📞 رقم هاتف إضافي</label> <input type="tel" id="editPhone2">
+     </div>
+     <div class="form-group"><label>📧 البريد الإلكتروني</label> <input type="email" id="editEmail">
+     </div>
+     <h4 style="margin: 24px 0 16px; color: var(--primary-color); display: flex; align-items: center; gap: 8px;"><span>💬</span> حسابات التواصل الاجتماعي</h4>
+     <div class="form-group"><label>📘 فيسبوك</label> <input type="text" id="editFacebook">
+     </div>
+     <div class="form-group"><label>💬 واتساب</label> <input type="tel" id="editWhatsapp">
+     </div>
+     <div class="form-group"><label>📍 العنوان</label> <textarea id="editAddress" rows="2"></textarea>
+     </div>
+     <div class="form-group"><label>🔒 كلمة المرور الجديدة (اتركها فارغة إذا لم ترد التغيير)</label> <input type="password" id="editPassword" placeholder="اختياري">
+     </div>
+     <div class="form-actions"><button type="submit" class="btn btn-primary">💾 حفظ التغييرات</button> <button type="button" class="btn btn-secondary" onclick="closeModal('editProfileModal')">إلغاء</button>
+     </div>
+    </form>
+   </div>
+  </div><!-- مودال تأكيد تحديث حالة الطلب -->
+  <div id="updateOrderStatusModal" class="modal">
+   <div class="modal-content" style="max-width: 400px;">
+    <div class="modal-header">
+     <h3>تحديث حالة الطلب</h3><button class="modal-close" onclick="closeModal('updateOrderStatusModal')">✕</button>
+    </div>
+    <div id="updateOrderStatusContent"></div>
+   </div>
+  </div><!-- حاوية التوست -->
+  <div class="toast-container" id="toastContainer"></div>
+  <script>
+    // ==================== التخزين المحلي / Local Storage ====================
+    const DB = {
+      get: (key) => {
+        try {
+          return JSON.parse(localStorage.getItem(key) || '[]');
+        } catch {
+          return [];
+        }
+      },
+      set: (key, data) => {
+        localStorage.setItem(key, JSON.stringify(data));
+      },
+      getOne: (key) => {
+        try {
+          return JSON.parse(localStorage.getItem(key));
+        } catch {
+          return null;
+        }
+      },
+      setOne: (key, data) => {
+        localStorage.setItem(key, JSON.stringify(data));
+      },
+      generateId: () => Date.now().toString(36) + Math.random().toString(36).substr(2)
+    };
 
-  <main>
-    <h2>Backend & API</h2>
-    <p>
-      API and backend logic for the Infinite Memory AI application.
-    </p>
-  </main>
+    // ==================== المستخدم الحالي / Current User ====================
+    let currentUser = null;
 
-  <footer>
-    <p>© 2025 - Built by Islam Hamdy</p>
-  </footer>
-</body>
+    // ==================== تهيئة المستخدمين الافتراضيين / Initialize Default Users ====================
+    function initializeDefaultUsers() {
+      const users = DB.get('users');
+      if (users.length === 0) {
+        const defaultUsers = [
+          {
+            id: 'admin1',
+            username: 'manager',
+            password: 'manager2025',
+            fullName: 'المدير',
+            email: 'ee5139901@gmail.com',
+            phone: '01099753053',
+            phone2: '',
+            facebook: '',
+            whatsapp: '01099753053',
+            address: 'البجلات، قرية البشمور، شركة اسلام حمدي البدوي',
+            role: 'admin',
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 'admin2',
+            username: 'accountant',
+            password: 'accountant2025',
+            fullName: 'المحاسب',
+            email: 'accountant@badawi.com',
+            phone: '01099753053',
+            phone2: '',
+            facebook: '',
+            whatsapp: '01099753053',
+            address: 'البجلات، قرية البشمور، شركة اسلام حمدي البدوي',
+            role: 'admin',
+            createdAt: new Date().toISOString()
+          }
+        ];
+        DB.set('users', defaultUsers);
+      }
+    }
+
+    // ==================== تسجيل الدخول / Login ====================
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+      const selectedType = document.querySelector('.user-type-btn.active').dataset.type;
+      
+      const users = DB.get('users');
+      const user = users.find(u => u.username === username && u.password === password);
+      
+      if (!user) {
+        showToast('اسم المستخدم أو كلمة المرور غير صحيحة', 'error');
+        return;
+      }
+      
+      if (user.role !== selectedType) {
+        showToast('نوع الحساب غير متطابق', 'error');
+        return;
+      }
+      
+      currentUser = user;
+      DB.setOne('currentUser', user);
+      
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('app').classList.add('active');
+      
+      initializeApp();
+      showToast('مرحباً ' + user.fullName, 'success');
+    });
+
+    // اختيار نوع المستخدم
+    document.querySelectorAll('.user-type-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.user-type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // ==================== التسجيل / Register ====================
+    function showRegisterModal() {
+      document.getElementById('registerModal').classList.add('show');
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const users = DB.get('users');
+      const username = document.getElementById('regUsername').value;
+      
+      if (users.find(u => u.username === username)) {
+        showToast('اسم المستخدم موجود بالفعل', 'error');
+        return;
+      }
+      
+      const newUser = {
+        id: DB.generateId(),
+        username: username,
+        password: document.getElementById('regPassword').value,
+        fullName: document.getElementById('regFullName').value,
+        email: document.getElementById('regEmail').value,
+        phone: document.getElementById('regPhone').value,
+        phone2: document.getElementById('regPhone2').value,
+        facebook: document.getElementById('regFacebook').value,
+        whatsapp: document.getElementById('regWhatsapp').value,
+        address: document.getElementById('regAddress').value,
+        role: 'customer',
+        createdAt: new Date().toISOString()
+      };
+      
+      users.push(newUser);
+      DB.set('users', users);
+      
+      closeModal('registerModal');
+      showToast('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول', 'success');
+      document.getElementById('registerForm').reset();
+    });
+
+    // ==================== تهيئة التطبيق / Initialize App ====================
+    function initializeApp() {
+      updateHeader();
+      buildMenu();
+      loadDashboard();
+    }
+
+    function updateHeader() {
+      const avatar = document.getElementById('headerAvatar');
+      const name = document.getElementById('headerName');
+      
+      avatar.textContent = currentUser.fullName.charAt(0);
+      name.textContent = currentUser.fullName;
+    }
+
+    function buildMenu() {
+      const menuList = document.getElementById('menuList');
+      
+      const adminMenu = [
+        { id: 'dashboard', icon: '📊', label: 'لوحة التحكم' },
+        { id: 'orders', icon: '🛒', label: 'الطلبات' },
+        { id: 'users', icon: '👥', label: 'المستخدمين' },
+        { id: 'guide', icon: '📖', label: 'دليل الاستخدام' },
+        { id: 'profile', icon: '👤', label: 'الملف الشخصي' },
+        { id: 'logout', icon: '🚪', label: 'تسجيل الخروج' }
+      ];
+      
+      const customerMenu = [
+        { id: 'dashboard', icon: '📊', label: 'الرئيسية' },
+        { id: 'myOrders', icon: '🛒', label: 'طلباتي' },
+        { id: 'guide', icon: '📖', label: 'دليل الاستخدام' },
+        { id: 'profile', icon: '👤', label: 'الملف الشخصي' },
+        { id: 'logout', icon: '🚪', label: 'تسجيل الخروج' }
+      ];
+      
+      const menu = currentUser.role === 'admin' ? adminMenu : customerMenu;
+      
+      menuList.innerHTML = menu.map(item => `
+        <li>
+          <button class="menu-item ${item.id === 'dashboard' ? 'active' : ''}" data-page="${item.id}">
+            <span class="menu-icon">${item.icon}</span>
+            <span class="menu-label">${item.label}</span>
+          </button>
+        </li>
+      `).join('');
+      
+      // إضافة مستمعي الأحداث
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const pageId = item.dataset.page;
+          
+          if (pageId === 'logout') {
+            logout();
+            return;
+          }
+          
+          navigateTo(pageId);
+        });
+      });
+    }
+
+    // ==================== التنقل / Navigation ====================
+    function navigateTo(pageId) {
+      // تحديث القائمة
+      document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+      const activeItem = document.querySelector(`[data-page="${pageId}"]`);
+      if (activeItem) activeItem.classList.add('active');
+      
+      // تحديث الصفحات
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const page = document.getElementById(pageId);
+      if (page) page.classList.add('active');
+      
+      // إغلاق القائمة على الموبايل
+      if (window.innerWidth < 768) {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('overlay').classList.remove('show');
+      }
+      
+      // تحميل البيانات
+      loadPageData(pageId);
+    }
+
+    // القائمة الجانبية
+    document.getElementById('menuToggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('overlay').classList.toggle('show');
+    });
+
+    document.getElementById('overlay').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('show');
+    });
+
+    // ==================== لوحة التحكم / Dashboard ====================
+    function loadDashboard() {
+      if (currentUser.role === 'customer') {
+        loadCustomerDashboard();
+      } else {
+        loadAdminDashboard();
+      }
+    }
+
+    function loadCustomerDashboard() {
+      document.getElementById('customerQuickActions').style.display = 'block';
+      
+      const orders = DB.get('orders').filter(o => o.userId === currentUser.id);
+      const pending = orders.filter(o => o.status === 'pending').length;
+      const completed = orders.filter(o => o.status === 'completed').length;
+      
+      document.getElementById('dashboardStats').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-icon">🛒</div>
+          <div class="stat-content">
+            <div class="stat-value">${orders.length}</div>
+            <div class="stat-label">إجمالي الطلبات</div>
+          </div>
+        </div>
+        <div class="stat-card highlight">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-content">
+            <div class="stat-value">${pending}</div>
+            <div class="stat-label">قيد المعالجة</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-content">
+            <div class="stat-value">${completed}</div>
+            <div class="stat-label">مكتملة</div>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('dashboardTips').innerHTML = `
+        <h3>💡 نصائح</h3>
+        <ul style="padding-right: 20px;">
+          <li>يمكنك تقديم طلب جديد من الأيقونات أعلاه</li>
+          <li>تابع حالة طلباتك من قائمة "طلباتي"</li>
+          <li>تواصل معنا في أي وقت للاستفسارات</li>
+          <li>راجع دليل الاستخدام لمعرفة كل الإمكانيات</li>
+        </ul>
+      `;
+    }
+
+    function loadAdminDashboard() {
+      document.getElementById('customerQuickActions').style.display = 'none';
+      
+      const orders = DB.get('orders');
+      const users = DB.get('users').filter(u => u.role === 'customer');
+      const pending = orders.filter(o => o.status === 'pending').length;
+      const confirmed = orders.filter(o => o.status === 'confirmed').length;
+      
+      document.getElementById('dashboardStats').innerHTML = `
+        <div class="stat-card highlight">
+          <div class="stat-icon">🛒</div>
+          <div class="stat-content">
+            <div class="stat-value">${orders.length}</div>
+            <div class="stat-label">إجمالي الطلبات</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-content">
+            <div class="stat-value">${pending}</div>
+            <div class="stat-label">قيد المعالجة</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-content">
+            <div class="stat-value">${confirmed}</div>
+            <div class="stat-label">مؤكدة</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-content">
+            <div class="stat-value">${users.length}</div>
+            <div class="stat-label">الزبائن</div>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('dashboardTips').innerHTML = `
+        <h3>💡 نصائح سريعة</h3>
+        <ul style="padding-right: 20px;">
+          <li>تابع الطلبات الجديدة من قائمة "الطلبات"</li>
+          <li>راجع بيانات الزبائن من قائمة "المستخدمين"</li>
+          <li>تواصل مع الزبائن عبر الهاتف أو واتساب</li>
+          <li>راجع دليل الاستخدام لمعرفة كل الإمكانيات</li>
+        </ul>
+      `;
+    }
+
+    // ==================== دليل الاستخدام / User Guide ====================
+    function loadGuide() {
+      const container = document.getElementById('guide');
+      
+      if (currentUser.role === 'customer') {
+        // دليل الزبون
+        container.innerHTML = `
+          <div class="page-header">
+            <h2>📖 دليل الاستخدام - للزبائن</h2>
+          </div>
+
+          <div class="guide-section">
+            <h3><span class="icon">🛒</span> كيف تطلب منتجات؟</h3>
+            <div class="guide-steps">
+              <div class="guide-step">
+                <div class="guide-step-number">1</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">🏠 اذهب للصفحة الرئيسية</div>
+                  <div class="guide-step-description">اضغط على أيقونة "طلب جديد" 🛒 من الصفحة الرئيسية</div>
+                </div>
+              </div>
+              
+              <div class="guide-step">
+                <div class="guide-step-number">2</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">📦 اختر المنتجات</div>
+                  <div class="guide-step-description">اكتب نوع المنتج (قمح، شعير، تمور...) وحدد عدد الربطات المطلوبة. يمكنك إضافة أكثر من صنف بالضغط على "+ إضافة صنف"</div>
+                </div>
+              </div>
+              
+              <div class="guide-step">
+                <div class="guide-step-number">3</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">⏰ حدد وقت التوصيل</div>
+                  <div class="guide-step-description">اختر متى تريد استلام الطلب: اليوم مساءً، غداً مساءً، أو حدد تاريخ آخر</div>
+                </div>
+              </div>
+              
+              <div class="guide-step">
+                <div class="guide-step-number">4</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">📍 اختر مكان الاستلام</div>
+                  <div class="guide-step-description">يمكنك الاستلام من مقر الشركة أو طلب التوصيل لعنوانك</div>
+                </div>
+              </div>
+              
+              <div class="guide-step">
+                <div class="guide-step-number">5</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">✅ أرسل الطلب</div>
+                  <div class="guide-step-description">راجع ملخص الطلب واضغط "إرسال الطلب". سنتواصل معك قريباً!</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="guide-section">
+            <h3><span class="icon">📋</span> كيف تتابع طلباتك؟</h3>
+            <div class="guide-steps">
+              <div class="guide-step">
+                <div class="guide-step-number">1</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">🛒 افتح "طلباتي"</div>
+                  <div class="guide-step-description">من القائمة الجانبية، اضغط على "طلباتي" لرؤية كل طلباتك</div>
+                </div>
+              </div>
+              
+              <div class="guide-step">
+                <div class="guide-step-number">2</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">👀 شاهد حالة الطلب</div>
+                  <div class="guide-step-description">
+                    كل طلب له حالة:<br>
+                    ⏳ قيد المعالجة - الطلب تحت المراجعة<br>
+                    ✅ مؤكد - تم تأكيد الطلب<br>
+                    🎉 مكتمل - تم تسليم الطلب
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="guide-section">
+            <h3><span class="icon">👤</span> كيف تعدل معلوماتك الشخصية؟</h3>
+            <div class="guide-steps">
+              <div class="guide-step">
+                <div class="guide-step-number">1</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">👤 افتح الملف الشخصي</div>
+                  <div class="guide-step-description">اضغط على اسمك في الأعلى أو اختر "الملف الشخصي" من القائمة</div>
+                </div>
+              </div>
+              
+              <div class="guide-step">
+                <div class="guide-step-number">2</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">✏️ اضغط "تعديل"</div>
+                  <div class="guide-step-description">اضغط على زر "تعديل" لتحديث بياناتك</div>
+                </div>
+              </div>
+              
+              <div class="guide-step">
+                <div class="guide-step-number">3</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">📱 أضف معلومات التواصل</div>
+                  <div class="guide-step-description">يمكنك إضافة أرقام هواتف، حسابات فيسبوك، واتساب، وبريد إلكتروني لتسهيل التواصل</div>
+                </div>
+              </div>
+              
+              <div class="guide-step">
+                <div class="guide-step-number">4</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">💾 احفظ التغييرات</div>
+                  <div class="guide-step-description">اضغط "حفظ التغييرات" لتحديث معلوماتك</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="guide-section">
+            <h3><span class="icon">📞</span> كيف تتواصل معنا؟</h3>
+            <div class="guide-steps">
+              <div class="guide-step">
+                <div class="guide-step-number">1</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">📞 اضغط "تواصل معنا"</div>
+                  <div class="guide-step-description">من الصفحة الرئيسية، اضغط على أيقونة "تواصل معنا"</div>
+                </div>
+              </div>
+              
+              <div class="guide-step">
+                <div class="guide-step-number">2</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">📱 اختر طريقة التواصل</div>
+                  <div class="guide-step-description">
+                    يمكنك الاتصال بنا عبر:<br>
+                    📱 الهاتف: 01099753053<br>
+                    📧 البريد: ee5139901@gmail.com<br>
+                    📍 زيارتنا: البجلات، قرية البشمور<br>
+                    ⏰ ساعات العمل: 1 ظهراً - 10 مساءً
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="background: var(--bg-gradient); color: white; text-align: center;">
+            <h3 style="color: white; margin-bottom: 16px;">💡 نصيحة مهمة</h3>
+            <p style="font-size: 1.1rem; line-height: 1.8;">
+              تأكد من إضافة معلومات التواصل الخاصة بك (أرقام الهواتف، واتساب، فيسبوك) في ملفك الشخصي لنتمكن من التواصل معك بسهولة!
+            </p>
+          </div>
+        `;
+      } else {
+        // دليل الإدارة
+        container.innerHTML = `
+          <div class="page-header">
+            <h2>📖 دليل الاستخدام - للإدارة</h2>
+          </div>
+
+          <div class="guide-section">
+            <h3><span class="icon">🛒</span> إدارة الطلبات</h3>
+            <div class="guide-steps">
+              <div class="guide-step">
+                <div class="guide-step-number">1</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">📋 افتح قائمة الطلبات</div>
+                  <div class="guide-step-description">من القائمة الجانبية، اضغط على "الطلبات" 🛒 لرؤية كل الطلبات</div>
+                </div>
+              </div>
+              
+              <div class="guide-step">
+                <div class="guide-step-number">2</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">👀 راجع تفاصيل الطلب</div>
+                  <div class="guide-step-description">كل طلب يحتوي على: اسم الزبون، المنتجات المطلوبة، الكمية، وقت التوصيل، ومكان الاستلام</div>
+                </div>
+              </div>
+              
+              <div class="guide-step">
+                <div class="guide-step-number">3</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">✅ حدّث حالة الطلب</div>
+                  <div class="guide-step-description">يمكنك تغيير حالة الطلب من "قيد المعالجة" إلى "مؤكد" أو "مكتمل"</div>
+                </div>
+              </div>
+              
+              <div class="guide-step">
+                <div class="guide-step-number">4</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">📞 تواصل مع الزبون</div>
+                  <div class="guide-step-description">استخدم معلومات التواصل المتوفرة (هاتف، واتساب، فيسبوك) للتواصل مع الزبون</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="guide-section">
+            <h3><span class="icon">👥</span> إدارة المستخدمين</h3>
+            <div class="guide-steps">
+              <div class="guide-step">
+                <div class="guide-step-number">1</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">👥 افتح قائمة المستخدمين</div>
+                  <div class="guide-step-description">من القائمة الجانبية، اضغط على "المستخدمين"</div>
+                </div>
+              </div>
+              
+              <div class="guide-step">
+                <div class="guide-step-number">2</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">👀 شاهد معلومات الزبائن</div>
+                  <div class="guide-step-description">كل بطاقة زبون تحتوي على: الاسم، الهاتف، البريد، العنوان، وحسابات التواصل الاجتماعي</div>
+                </div>
+              </div>
+              
+              <div class="guide-step">
+                <div class="guide-step-number">3</div>
+                <div class="guide-step-content">
+                  <div class="guide-step-title">📊 راجع نشاط الزبون</div>
+                  <div class="guide-step-description">اضغط "عرض الملف" لرؤية تفاصيل الزبون وطلباته السابقة</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="background: var(--bg-gradient); color: white; text-align: center;">
+            <h3 style="color: white; margin-bottom: 16px;">💡 نصائح للإدارة</h3>
+            <p style="font-size: 1.1rem; line-height: 1.8;">
+              • راجع الطلبات الجديدة يومياً<br>
+              • حدّث حالة الطلبات بانتظام<br>
+              • تواصل مع الزبائن عبر الهاتف أو واتساب<br>
+              • استخدم معلومات التواصل المتوفرة في ملفات الزبائن
+            </p>
+          </div>
+        `;
+      }
+    }
+
+    // ==================== الطلبات (للإدارة) / Orders ====================
+    function loadOrders() {
+      const orders = DB.get('orders').sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      const container = document.getElementById('orders');
+      
+      container.innerHTML = `
+        <div class="page-header">
+          <h2>🛒 الطلبات</h2>
+        </div>
+      `;
+      
+      if (orders.length === 0) {
+        container.innerHTML += '<div class="empty-state"><div class="icon">🛒</div><p>لا توجد طلبات بعد</p></div>';
+        return;
+      }
+      
+      container.innerHTML += orders.map(order => {
+        const user = DB.get('users').find(u => u.id === order.userId);
+        
+        // عرض الأصناف
+        let itemsDisplay = '';
+        if (order.items && Array.isArray(order.items)) {
+          itemsDisplay = order.items.map(item => `
+            <div style="padding: 8px; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 6px;">
+              📦 ${item.product}: <strong>${item.quantity} ربطة</strong>
+            </div>
+          `).join('');
+        } else {
+          itemsDisplay = `<p>📦 ${order.productType || 'منتج'}: ${order.quantity || 0} ربطة</p>`;
+        }
+        
+        return `
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+              <div>
+                <h3>طلب #${order.id.substring(0, 8)}</h3>
+                <p style="color: var(--text-secondary); font-size: 0.875rem;">📅 ${new Date(order.createdAt).toLocaleDateString('ar-SA')} - ${new Date(order.createdAt).toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}</p>
+              </div>
+              <span class="status-badge status-${order.status}">
+                ${order.status === 'pending' ? '⏳ قيد المعالجة' : order.status === 'confirmed' ? '✅ مؤكد' : '🎉 مكتمل'}
+              </span>
+            </div>
+            
+            <div style="margin-bottom: 16px; padding: 12px; background: var(--bg-secondary); border-radius: 8px;">
+              <h4 style="margin-bottom: 8px; font-size: 0.95rem;">👤 معلومات الزبون:</h4>
+              <p><strong>الاسم:</strong> ${order.customerName || 'غير محدد'}</p>
+              ${user && user.phone ? `<p>📱 <strong>الهاتف:</strong> <a href="tel:${user.phone}" style="color: var(--primary-color);">${user.phone}</a></p>` : ''}
+              ${user && user.whatsapp ? `<p>💬 <strong>واتساب:</strong> <a href="https://wa.me/${user.whatsapp.replace(/\D/g, '')}" target="_blank" style="color: var(--success-color);">${user.whatsapp}</a></p>` : ''}
+              ${user && user.facebook ? `<p>📘 <strong>فيسبوك:</strong> <a href="${user.facebook}" target="_blank" style="color: var(--info-color);">الملف الشخصي</a></p>` : ''}
+            </div>
+            
+            <div style="margin-bottom: 16px;">
+              <h4 style="margin-bottom: 8px; font-size: 0.95rem;">الأصناف المطلوبة:</h4>
+              ${itemsDisplay}
+            </div>
+            
+            <div style="display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border-color); margin-bottom: 16px;">
+              ${order.deliveryTime ? `<p>⏰ ${order.deliveryTime}</p>` : ''}
+              ${order.pickupAddress ? `<p>📍 ${order.pickupAddress}</p>` : ''}
+              ${order.notes ? `<p style="color: var(--text-secondary); font-size: 0.875rem;">📝 ${order.notes}</p>` : ''}
+            </div>
+            
+            <div class="card-actions">
+              ${order.status === 'pending' ? `
+                <button class="btn btn-small btn-success" onclick="updateOrderStatus('${order.id}', 'confirmed')">✅ تأكيد الطلب</button>
+              ` : ''}
+              ${order.status === 'confirmed' ? `
+                <button class="btn btn-small btn-primary" onclick="updateOrderStatus('${order.id}', 'completed')">🎉 إكمال الطلب</button>
+              ` : ''}
+              ${user ? `<button class="btn btn-small btn-secondary" onclick="viewUserProfile('${user.id}')">👤 عرض ملف الزبون</button>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateOrderStatus(orderId, newStatus) {
+      const orders = DB.get('orders');
+      const orderIndex = orders.findIndex(o => o.id === orderId);
+      
+      if (orderIndex === -1) {
+        showToast('حدث خطأ في تحديث الطلب', 'error');
+        return;
+      }
+      
+      const statusText = newStatus === 'confirmed' ? 'مؤكد' : newStatus === 'completed' ? 'مكتمل' : 'قيد المعالجة';
+      
+      const modalContent = document.getElementById('updateOrderStatusContent');
+      modalContent.innerHTML = `
+        <p style="margin-bottom: 24px;">هل تريد تحديث حالة الطلب إلى "<strong>${statusText}</strong>"؟</p>
+        <div style="display: flex; gap: 12px;">
+          <button class="btn btn-primary" onclick="confirmUpdateOrderStatus('${orderId}', '${newStatus}')">نعم، تحديث</button>
+          <button class="btn btn-secondary" onclick="closeModal('updateOrderStatusModal')">إلغاء</button>
+        </div>
+      `;
+      
+      document.getElementById('updateOrderStatusModal').classList.add('show');
+    }
+
+    function confirmUpdateOrderStatus(orderId, newStatus) {
+      const orders = DB.get('orders');
+      const orderIndex = orders.findIndex(o => o.id === orderId);
+      
+      if (orderIndex !== -1) {
+        orders[orderIndex].status = newStatus;
+        DB.set('orders', orders);
+        
+        closeModal('updateOrderStatusModal');
+        loadOrders();
+        showToast('تم تحديث حالة الطلب بنجاح! ✅', 'success');
+      }
+    }
+
+    // ==================== طلب جديد (للزبائن) / New Order ====================
+    let orderItems = [];
+
+    function showNewOrderModal() {
+      orderItems = [];
+      document.getElementById('newOrderModal').classList.add('show');
+      document.getElementById('orderItemsList').innerHTML = '';
+      updateOrderSummary();
+      addOrderItem();
+    }
+
+    function addOrderItem() {
+      const itemId = 'item_' + Date.now();
+      const itemDiv = document.createElement('div');
+      itemDiv.id = itemId;
+      itemDiv.className = 'card';
+      itemDiv.style.cssText = 'margin-bottom: 12px; padding: 12px; background: var(--bg-primary); border: 1px solid var(--border-color);';
+      
+      itemDiv.innerHTML = `
+        <div style="display: flex; gap: 12px; align-items: start;">
+          <div style="flex: 2;">
+            <label style="display: block; margin-bottom: 4px; font-size: 0.875rem; font-weight: 500;">نوع المنتج</label>
+            <input type="text" class="item-product" placeholder="قمح، شعير، تمور..." required style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.875rem;">
+          </div>
+          <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 4px; font-size: 0.875rem; font-weight: 500;">عدد الربطات</label>
+            <input type="number" class="item-quantity" placeholder="0" min="1" required style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.875rem;">
+          </div>
+          <div style="padding-top: 24px;">
+            <button type="button" class="btn btn-small btn-danger" onclick="removeOrderItem('${itemId}')" style="padding: 8px 12px;">🗑️</button>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('orderItemsList').appendChild(itemDiv);
+      
+      itemDiv.querySelector('.item-product').addEventListener('input', updateOrderSummary);
+      itemDiv.querySelector('.item-quantity').addEventListener('input', updateOrderSummary);
+    }
+
+    function removeOrderItem(itemId) {
+      const itemDiv = document.getElementById(itemId);
+      if (itemDiv) {
+        itemDiv.remove();
+        updateOrderSummary();
+      }
+      
+      if (document.getElementById('orderItemsList').children.length === 0) {
+        addOrderItem();
+      }
+    }
+
+    function updateOrderSummary() {
+      const items = document.querySelectorAll('#orderItemsList > div');
+      let summary = '';
+      let totalItems = 0;
+      let totalQuantity = 0;
+      
+      items.forEach(item => {
+        const product = item.querySelector('.item-product').value;
+        const quantity = parseFloat(item.querySelector('.item-quantity').value) || 0;
+        
+        if (product && quantity > 0) {
+          summary += `• ${product}: ${quantity} ربطة\n`;
+          totalItems++;
+          totalQuantity += quantity;
+        }
+      });
+      
+      const summaryDiv = document.getElementById('orderSummary');
+      if (totalItems === 0) {
+        summaryDiv.innerHTML = '<span style="color: var(--text-secondary);">لم يتم إضافة أصناف بعد</span>';
+      } else {
+        summaryDiv.innerHTML = `
+          <div style="white-space: pre-line; margin-bottom: 12px;">${summary}</div>
+          <div style="padding-top: 12px; border-top: 1px solid var(--border-color); font-weight: 600;">
+            إجمالي: ${totalItems} صنف • ${totalQuantity} ربطة
+          </div>
+        `;
+      }
+    }
+
+    document.getElementById('orderDeliveryTime').addEventListener('change', function() {
+      const customDateGroup = document.getElementById('customDateGroup');
+      if (this.value === 'custom') {
+        customDateGroup.style.display = 'block';
+        document.getElementById('orderCustomDate').required = true;
+      } else {
+        customDateGroup.style.display = 'none';
+        document.getElementById('orderCustomDate').required = false;
+      }
+    });
+
+    document.getElementById('orderPickupLocation').addEventListener('change', function() {
+      const deliveryAddressGroup = document.getElementById('deliveryAddressGroup');
+      if (this.value === 'delivery_address') {
+        deliveryAddressGroup.style.display = 'block';
+        document.getElementById('orderDeliveryAddress').required = true;
+      } else {
+        deliveryAddressGroup.style.display = 'none';
+        document.getElementById('orderDeliveryAddress').required = false;
+      }
+    });
+
+    document.getElementById('newOrderForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const items = [];
+      const itemDivs = document.querySelectorAll('#orderItemsList > div');
+      
+      itemDivs.forEach(itemDiv => {
+        const product = itemDiv.querySelector('.item-product').value.trim();
+        const quantity = parseFloat(itemDiv.querySelector('.item-quantity').value);
+        
+        if (product && quantity > 0) {
+          items.push({ product, quantity });
+        }
+      });
+      
+      if (items.length === 0) {
+        showToast('يرجى إضافة صنف واحد على الأقل', 'error');
+        return;
+      }
+      
+      const deliveryTimeOption = document.getElementById('orderDeliveryTime').value;
+      let deliveryTime = '';
+      let deliveryDate = '';
+      
+      if (deliveryTimeOption === 'today_evening') {
+        const today = new Date();
+        deliveryDate = today.toISOString().split('T')[0];
+        deliveryTime = 'اليوم مساءً';
+      } else if (deliveryTimeOption === 'tomorrow_evening') {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        deliveryDate = tomorrow.toISOString().split('T')[0];
+        deliveryTime = 'غداً مساءً';
+      } else if (deliveryTimeOption === 'custom') {
+        deliveryDate = document.getElementById('orderCustomDate').value;
+        deliveryTime = 'تاريخ مخصص: ' + new Date(deliveryDate).toLocaleDateString('ar-SA');
+      }
+      
+      const pickupLocation = document.getElementById('orderPickupLocation').value;
+      let pickupAddress = '';
+      
+      if (pickupLocation === 'company_address') {
+        pickupAddress = 'من مقر الشركة (البجلات، قرية البشمور، شركة اسلام حمدي البدوي)';
+      } else if (pickupLocation === 'delivery_address') {
+        pickupAddress = 'التوصيل إلى: ' + document.getElementById('orderDeliveryAddress').value;
+      }
+      
+      const orders = DB.get('orders');
+      const newOrder = {
+        id: DB.generateId(),
+        userId: currentUser.id,
+        customerName: currentUser.fullName,
+        customerPhone: currentUser.phone,
+        items: items,
+        deliveryTime: deliveryTime,
+        deliveryDate: deliveryDate,
+        pickupLocation: pickupLocation,
+        pickupAddress: pickupAddress,
+        notes: document.getElementById('orderNotes').value,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      };
+      
+      orders.push(newOrder);
+      DB.set('orders', orders);
+      
+      closeModal('newOrderModal');
+      document.getElementById('newOrderForm').reset();
+      orderItems = [];
+      showToast('تم إرسال الطلب بنجاح! سنتواصل معك قريباً 🎉', 'success');
+      loadDashboard();
+    });
+
+    // ==================== طلباتي / My Orders ====================
+    function loadMyOrders() {
+      const orders = DB.get('orders').filter(o => o.userId === currentUser.id).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      const container = document.getElementById('myOrders');
+      
+      container.innerHTML = `
+        <div class="page-header">
+          <h2>🛒 طلباتي</h2>
+          <button class="btn btn-primary" onclick="showNewOrderModal()">+ طلب جديد</button>
+        </div>
+      `;
+      
+      if (orders.length === 0) {
+        container.innerHTML += '<div class="empty-state"><div class="icon">🛒</div><p>لا توجد طلبات بعد</p></div>';
+        return;
+      }
+      
+      container.innerHTML += orders.map(order => {
+        let itemsDisplay = '';
+        if (order.items && Array.isArray(order.items)) {
+          itemsDisplay = order.items.map(item => `
+            <div style="padding: 8px; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 6px;">
+              📦 ${item.product}: <strong>${item.quantity} ربطة</strong>
+            </div>
+          `).join('');
+        } else {
+          itemsDisplay = `<p>📦 ${order.productType || 'منتج'}: ${order.quantity || 0} ربطة</p>`;
+        }
+        
+        return `
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+              <div>
+                <h3>طلب #${order.id.substring(0, 8)}</h3>
+                <p style="color: var(--text-secondary); font-size: 0.875rem;">📅 ${new Date(order.createdAt).toLocaleDateString('ar-SA')} - ${new Date(order.createdAt).toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}</p>
+              </div>
+              <span class="status-badge status-${order.status}">
+                ${order.status === 'pending' ? '⏳ قيد المعالجة' : order.status === 'confirmed' ? '✅ مؤكد' : '🎉 مكتمل'}
+              </span>
+            </div>
+            
+            <div style="margin-bottom: 16px;">
+              <h4 style="margin-bottom: 8px; font-size: 0.95rem;">الأصناف المطلوبة:</h4>
+              ${itemsDisplay}
+            </div>
+            
+            <div style="display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border-color);">
+              ${order.deliveryTime ? `<p>⏰ ${order.deliveryTime}</p>` : ''}
+              ${order.pickupAddress ? `<p>📍 ${order.pickupAddress}</p>` : ''}
+              ${order.notes ? `<p style="color: var(--text-secondary); font-size: 0.875rem;">📝 ${order.notes}</p>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ==================== المستخدمين (للإدارة) / Users ====================
+    function loadUsers() {
+      const users = DB.get('users').filter(u => u.role === 'customer');
+      const container = document.getElementById('users');
+      
+      container.innerHTML = `
+        <div class="page-header">
+          <h2>👥 المستخدمين</h2>
+        </div>
+      `;
+      
+      if (users.length === 0) {
+        container.innerHTML += '<div class="empty-state"><div class="icon">👥</div><p>لا يوجد مستخدمين</p></div>';
+        return;
+      }
+      
+      container.innerHTML += '<div class="users-grid">' + users.map(user => {
+        const userOrders = DB.get('orders').filter(o => o.userId === user.id);
+        
+        return `
+          <div class="user-card">
+            <div class="user-card-header">
+              <div class="user-card-avatar">${user.fullName.charAt(0)}</div>
+              <div class="user-card-info">
+                <div class="user-card-name">${user.fullName}</div>
+                <span class="status-badge badge-customer">زبون</span>
+              </div>
+            </div>
+            <div class="user-card-details">
+              ${user.phone ? `<div>📱 <a href="tel:${user.phone}" style="color: var(--primary-color);">${user.phone}</a></div>` : ''}
+              ${user.phone2 ? `<div>📱 ${user.phone2}</div>` : ''}
+              ${user.whatsapp ? `<div>💬 واتساب: <a href="https://wa.me/${user.whatsapp.replace(/\D/g, '')}" target="_blank" style="color: var(--success-color);">${user.whatsapp}</a></div>` : ''}
+              ${user.facebook ? `<div>📘 <a href="${user.facebook}" target="_blank" style="color: var(--info-color);">فيسبوك</a></div>` : ''}
+              ${user.email ? `<div>📧 ${user.email}</div>` : ''}
+              ${user.address ? `<div>📍 ${user.address}</div>` : ''}
+              <div>🛒 ${userOrders.length} طلب</div>
+              <div>📅 انضم: ${new Date(user.createdAt).toLocaleDateString('ar-SA')}</div>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-small btn-primary" onclick="viewUserProfile('${user.id}')">عرض الملف</button>
+            </div>
+          </div>
+        `;
+      }).join('') + '</div>';
+    }
+
+    function viewUserProfile(userId) {
+      const user = DB.get('users').find(u => u.id === userId);
+      if (!user) return;
+      
+      const orders = DB.get('orders').filter(o => o.userId === userId);
+      
+      navigateTo('profile');
+      
+      const container = document.getElementById('profile');
+      container.innerHTML = `
+        <div class="profile-header">
+          <div class="profile-avatar">${user.fullName.charAt(0)}</div>
+          <div class="profile-info">
+            <h2>${user.fullName}</h2>
+            <div class="profile-meta">
+              <span class="status-badge badge-customer">زبون</span>
+              <span>📅 انضم: ${new Date(user.createdAt).toLocaleDateString('ar-SA')}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>📋 معلومات الاتصال</h3>
+          <div style="display: grid; gap: 12px;">
+            ${user.phone ? `<p>📱 الهاتف الأساسي: <a href="tel:${user.phone}" style="color: var(--primary-color);">${user.phone}</a></p>` : ''}
+            ${user.phone2 ? `<p>📱 هاتف إضافي: ${user.phone2}</p>` : ''}
+            ${user.whatsapp ? `<p>💬 واتساب: <a href="https://wa.me/${user.whatsapp.replace(/\D/g, '')}" target="_blank" style="color: var(--success-color);">${user.whatsapp}</a></p>` : ''}
+            ${user.facebook ? `<p>📘 فيسبوك: <a href="${user.facebook}" target="_blank" style="color: var(--info-color);">الملف الشخصي</a></p>` : ''}
+            ${user.email ? `<p>📧 البريد: ${user.email}</p>` : ''}
+            ${user.address ? `<p>📍 العنوان: ${user.address}</p>` : ''}
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>🛒 الطلبات (${orders.length})</h3>
+          ${orders.length === 0 ? '<p>لا توجد طلبات</p>' : orders.map(order => {
+            let itemsSummary = '';
+            if (order.items && Array.isArray(order.items)) {
+              itemsSummary = order.items.map(item => `${item.product} (${item.quantity})`).join(', ');
+            } else {
+              itemsSummary = `${order.productType || 'منتج'} (${order.quantity || 0})`;
+            }
+            
+            return `
+              <div style="padding: 12px; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 8px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                  <strong>${itemsSummary}</strong>
+                  <span class="status-badge status-${order.status}">
+                    ${order.status === 'pending' ? 'قيد المعالجة' : order.status === 'confirmed' ? 'مؤكد' : 'مكتمل'}
+                  </span>
+                </div>
+                <p style="font-size: 0.875rem; color: var(--text-secondary);">
+                  📅 ${new Date(order.createdAt).toLocaleDateString('ar-SA')}
+                </p>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <button class="btn btn-secondary" onclick="loadUsers(); navigateTo('users');">← العودة للمستخدمين</button>
+      `;
+    }
+
+    // ==================== الملف الشخصي / Profile ====================
+    function loadProfile() {
+      const container = document.getElementById('profile');
+      const orders = DB.get('orders').filter(o => o.userId === currentUser.id);
+      
+      container.innerHTML = `
+        <div class="profile-header">
+          <div class="profile-avatar">${currentUser.fullName.charAt(0)}</div>
+          <div class="profile-info">
+            <h2>${currentUser.fullName}</h2>
+            <div class="profile-meta">
+              <span class="status-badge ${currentUser.role === 'admin' ? 'badge-admin' : 'badge-customer'}">
+                ${currentUser.role === 'admin' ? 'مدير' : 'زبون'}
+              </span>
+              <span>📅 انضم: ${new Date(currentUser.createdAt).toLocaleDateString('ar-SA')}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3>📋 معلومات الحساب</h3>
+            <button class="btn btn-small btn-primary" onclick="showEditProfileModal()">✏️ تعديل</button>
+          </div>
+          <div style="display: grid; gap: 12px;">
+            <p><strong>اسم المستخدم:</strong> ${currentUser.username}</p>
+            <p><strong>الاسم الكامل:</strong> ${currentUser.fullName}</p>
+            ${currentUser.phone ? `<p><strong>📱 الهاتف الأساسي:</strong> ${currentUser.phone}</p>` : '<p style="color: var(--text-secondary);">📱 الهاتف الأساسي: غير محدد</p>'}
+            ${currentUser.phone2 ? `<p><strong>📱 هاتف إضافي:</strong> ${currentUser.phone2}</p>` : ''}
+            ${currentUser.whatsapp ? `<p><strong>💬 واتساب:</strong> ${currentUser.whatsapp}</p>` : ''}
+            ${currentUser.facebook ? `<p><strong>📘 فيسبوك:</strong> ${currentUser.facebook}</p>` : ''}
+            ${currentUser.email ? `<p><strong>📧 البريد:</strong> ${currentUser.email}</p>` : '<p style="color: var(--text-secondary);">📧 البريد: غير محدد</p>'}
+            ${currentUser.address ? `<p><strong>📍 العنوان:</strong> ${currentUser.address}</p>` : '<p style="color: var(--text-secondary);">📍 العنوان: غير محدد</p>'}
+          </div>
+        </div>
+
+        ${currentUser.role === 'customer' ? `
+          <div class="card">
+            <h3>🛒 إحصائيات الطلبات</h3>
+            <div style="display: grid; gap: 12px;">
+              <p>إجمالي الطلبات: <strong>${orders.length}</strong></p>
+              <p>قيد المعالجة: <strong>${orders.filter(o => o.status === 'pending').length}</strong></p>
+              <p>مكتملة: <strong>${orders.filter(o => o.status === 'completed').length}</strong></p>
+            </div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function showEditProfileModal() {
+      document.getElementById('editFullName').value = currentUser.fullName || '';
+      document.getElementById('editEmail').value = currentUser.email || '';
+      document.getElementById('editPhone').value = currentUser.phone || '';
+      document.getElementById('editPhone2').value = currentUser.phone2 || '';
+      document.getElementById('editFacebook').value = currentUser.facebook || '';
+      document.getElementById('editWhatsapp').value = currentUser.whatsapp || '';
+      document.getElementById('editAddress').value = currentUser.address || '';
+      document.getElementById('editPassword').value = '';
+      
+      document.getElementById('editProfileModal').classList.add('show');
+    }
+
+    document.getElementById('editProfileForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const users = DB.get('users');
+      const userIndex = users.findIndex(u => u.id === currentUser.id);
+      
+      if (userIndex === -1) {
+        showToast('حدث خطأ في تحديث البيانات', 'error');
+        return;
+      }
+      
+      users[userIndex].fullName = document.getElementById('editFullName').value;
+      users[userIndex].email = document.getElementById('editEmail').value;
+      users[userIndex].phone = document.getElementById('editPhone').value;
+      users[userIndex].phone2 = document.getElementById('editPhone2').value;
+      users[userIndex].facebook = document.getElementById('editFacebook').value;
+      users[userIndex].whatsapp = document.getElementById('editWhatsapp').value;
+      users[userIndex].address = document.getElementById('editAddress').value;
+      
+      const newPassword = document.getElementById('editPassword').value;
+      if (newPassword.trim() !== '') {
+        users[userIndex].password = newPassword;
+      }
+      
+      DB.set('users', users);
+      
+      currentUser = users[userIndex];
+      DB.setOne('currentUser', currentUser);
+      
+      updateHeader();
+      loadProfile();
+      
+      closeModal('editProfileModal');
+      showToast('تم تحديث الملف الشخصي بنجاح! ✅', 'success');
+    });
+
+    // ==================== تحميل البيانات حسب الصفحة / Load Page Data ====================
+    function loadPageData(pageId) {
+      switch(pageId) {
+        case 'dashboard':
+          loadDashboard();
+          break;
+        case 'guide':
+          loadGuide();
+          break;
+        case 'orders':
+          loadOrders();
+          break;
+        case 'myOrders':
+          loadMyOrders();
+          break;
+        case 'users':
+          loadUsers();
+          break;
+        case 'profile':
+          loadProfile();
+          break;
+      }
+    }
+
+    // ==================== تسجيل الخروج / Logout ====================
+    function logout() {
+      const confirmLogout = document.createElement('div');
+      confirmLogout.className = 'modal show';
+      confirmLogout.innerHTML = `
+        <div class="modal-content" style="max-width: 400px;">
+          <h3 style="margin-bottom: 16px;">تسجيل الخروج</h3>
+          <p style="margin-bottom: 24px;">هل تريد تسجيل الخروج؟</p>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn btn-danger" onclick="confirmLogoutAction()">نعم، تسجيل الخروج</button>
+            <button class="btn btn-secondary" onclick="this.closest('.modal').remove()">إلغاء</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(confirmLogout);
+    }
+
+    function confirmLogoutAction() {
+      currentUser = null;
+      localStorage.removeItem('currentUser');
+      document.getElementById('app').classList.remove('active');
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.querySelectorAll('.modal').forEach(m => m.remove());
+      showToast('تم تسجيل الخروج بنجاح', 'info');
+    }
+
+    // ==================== المودال / Modal ====================
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('show');
+    }
+
+    function showContactModal() {
+      document.getElementById('contactModal').classList.add('show');
+    }
+
+    // ==================== التوست / Toast ====================
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span>
+        <span>${message}</span>
+      `;
+      
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // ==================== التهيئة / Initialization ====================
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeDefaultUsers();
+      
+      const savedUser = DB.getOne('currentUser');
+      if (savedUser) {
+        currentUser = savedUser;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('app').classList.add('active');
+        initializeApp();
+      }
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99d024a732da7940',t:'MTc2Mjg4ODc4Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
